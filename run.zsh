@@ -14,7 +14,7 @@ setCommand() {
 			isExists=1
 			file="$arr[2]"
 			if [[ -n "$1" ]]; then
-				newData="$newData${arr[1]}:${1:A}\n" # New command
+				newData="$newData${arr[1]}:${1}\n" # New command
 			else
 				newData="$newData$line\n"
 			fi
@@ -51,12 +51,24 @@ save() {
 
 setCommand
 if [[ "${0##*/}" == "run" ]]; then
-	if [[ -f "$file" ]]; then
+	[[ -d ".venv" ]] && source .venv/bin/activate # Activate venv
+	if [[ -f "$file" ]]; then # File found
 		echo "$file"
 		python3 "$file" "$@"
+	elif [[ "${file::3}" == "-m " ]]; then # Module
+		echo "${file:3}"
+		python3 -m "${file:3}" "$@"
 	else
-		echo "run: no such file or directory: $file"
+		echo "run: no such file or directory: "${file##*/}""
 	fi
-else # runfile
-	save "$@"
+elif [[ "${0##*/}" == "runfile" ]]; then
+	if [[ "$1" == "-h" ]]; then
+		echo "usage: runfile [-m] [-h] [file]"
+	elif [[ "$1" == "-m" ]]; then
+		save "-m $2"
+	else
+		save "${1:A}"
+	fi
+else
+	echo "Something went wrong."
 fi
