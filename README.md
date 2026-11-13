@@ -22,24 +22,34 @@ This also activates `.venv` if it exists in your directory.
    ```sh
    runfile sample.py
    ```
-2. Type `run` to execute it.
-3. You can pass arguments as usual. The following two commands are equivalent:
+   Or you can specify a module with the `-m` option, which is effective when using relative imports.
+   ```sh
+   runfile -m module.main
+   ```
+
+3. Type `run` to execute it. This remembers which file to run, even after moving to a different path.
+4. You can pass arguments as usual. The following two commands are equivalent:
    ```sh
    run file1 file2
    python3 sample.py file1 file2
    ```
+## Options
+Both options only work with `runfile`.
+- `-h` : print usage
+- `-m` : module file
+
+## Structure
 The recorded commands will be automatically saved to `python_target_file.txt` in the directory containing `run`.
 Unlike `.DS_Store` on macOS or `.vs` in Visual Studio, this design keeps your project directory clean. 
-You can manually add paths and commands separated by `:` as shown below.
-
-```
-/home/user/project1:/home/user/project1/script.py
-/home/user/project2:-m module.main
-```
-
 ```tree
 .
 ├── python_target_file.txt   <- HERE
 ├── run
 └── runfile
+```
+
+You can manually add paths and commands separated by `:` as shown below.
+```
+/home/user/project1:/home/user/project1/script.py
+/home/user/project2:-m module.main
 ```
