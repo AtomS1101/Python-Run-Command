@@ -2,6 +2,8 @@
 This shell script lets you run a Python script just by typing `run`.
 It remembers which script to run for each working directory.
 
+This also activates `.venv` if it exists in your directory.
+
 ## Setup
 
 1. Save the script as a file named `run` in a directory that is in your `PATH`.
@@ -13,7 +15,7 @@ It remembers which script to run for each working directory.
    ```sh
    ln -s run runfile
    ```
-
+   
 ## Usage
 
 1. Register the script to run in the current directory:
@@ -26,3 +28,10 @@ It remembers which script to run for each working directory.
    run file1 file2
    python3 sample.py file1 file2
    ```
+The recorded commands will be automatically saved to `python_target_file.txt` in the directory containing `run`.
+```tree
+.
+├── python_target_file.txt   <- HERE
+├── run
+└── runfile
+```
