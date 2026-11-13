@@ -9,46 +9,33 @@ setCommand() {
 	isExists=0
 	file="./main.py" # Default
 	for line in $savedData; do
-		local arr=("${(@s/:/)line}")
-		if [[ "${PWD:A}" == "$arr[1]" ]]; then
+		local array=("${(@s/:/)line}")
+		local flag=0
+		if [[ "${PWD:A}" == "$array[1]" ]]; then
 			isExists=1
-			file="$arr[2]"
-			if [[ -n "$1" ]]; then
-				newData="$newData${arr[1]}:${1}\n" # New command
-			else
-				newData="$newData$line\n"
+			file="$array[2]"
+			if [[ -n "$1" ]]; then # $1 is a new command
+				newData="$newData${array[1]}:${1}\n" # New command
+				flag=1
 			fi
-		else
-			newData="$newData$line\n"
 		fi
+		[[ "$flag" -eq 0 ]] && newData="$newData$line\n"
 	done
 }
 
 save() {
+	local fileName=${1:-./main.py}
 	if [[ "$isExists" -eq 1 ]]; then # Already exists
-		if [[ -n "$1" ]]; then
-			setCommand "$1"
-			echo -en "$newData" > "$savedFile"
-			echo "  Set file: $1"
-		else
-			setCommand "./main.py"
-			echo -en "$newData" > "$savedFile"
-			echo "  Set file: ./main.py  (Default)"
-		fi
+		setCommand "$fileName"
+		echo -en "$newData" > "$savedFile"
+		echo "  Set file: ${fileName##*/}"
 	else # Not found
-		if [[ -n "$1" ]]; then
-			echo "${PWD:A}:${1:A}" >> "$savedFile"
-			echo "  Set file: $1"
-		else
-			local default="./main.py"
-			echo "${PWD:A}:${default:A}" >> "$savedFile"
-			echo "  Set file: ./main.py  (Default)"
-		fi
+		echo "${PWD:A}:${fileName:A}" >> "$savedFile"
+		echo "  Set file: ${fileName##*/}"
 	fi
 }
 
 [[ ! -f "$savedFile" ]] && echo "# You can manually add paths here." > "$savedFile"
-
 setCommand
 if [[ "${0##*/}" == "run" ]]; then
 	[[ -d ".venv" ]] && source .venv/bin/activate # Activate venv
@@ -62,10 +49,14 @@ if [[ "${0##*/}" == "run" ]]; then
 		echo "run: no such file or directory: "${file##*/}""
 	fi
 elif [[ "${0##*/}" == "runfile" ]]; then
-	if [[ "$1" == "-h" ]]; then
+	if [[ "$1" == "-h" ]]; then # Help
 		echo "usage: runfile [-m] [-h] [file]"
-	elif [[ "$1" == "-m" ]]; then
-		save "-m $2"
+	elif [[ "$1" == "-m" ]]; then # Module
+		if [[ -n "$2" ]]; then
+			save "-m $2"
+		else
+			echo "runfile: No input file"
+		fi
 	else
 		save "${1:A}"
 	fi
