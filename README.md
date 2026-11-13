@@ -29,6 +29,14 @@ This also activates `.venv` if it exists in your directory.
    python3 sample.py file1 file2
    ```
 The recorded commands will be automatically saved to `python_target_file.txt` in the directory containing `run`.
+Unlike `.DS_Store` on macOS or `.vs` in Visual Studio, this design keeps your project directory clean. 
+You can manually add paths and commands separated by `:` as shown below.
+
+```
+/home/user/project1:/home/user/project1/script.py
+/home/user/project2:-m module.main
+```
+
 ```tree
 .
 ├── python_target_file.txt   <- HERE
